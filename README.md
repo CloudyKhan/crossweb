@@ -1,89 +1,94 @@
-# Cross‐Platform ASP.NET and PHP WebShells
+# CrossWeb WebShells (ASP.NET and PHP)
 
-Two webshells in **ASP.NET (C#)** and the other in **PHP** can run arbitrary commands on both Windows and Linux servers. They also support file uploads, fetching remote files, downloading local files, and optional password protection.
+**CrossWeb** provides two distinct webshells:  
+- **`crossweb.aspx`** (C# ASP.NET)  
+- **`crossweb.php`** (PHP)  
 
-> **Security Warning**  
-> These scripts allow arbitrary command execution and file operations.  
-> **Never deploy them publicly.** Use them **only** in a secure test or lab environment, and **only** with proper authorization.
+Each one enables cross‐platform command execution, file transfers (upload/download), and optional password protection. They **automatically detect** whether the server is running on Windows or Linux, then execute commands via **`cmd.exe`** or **`/bin/bash`**.
+
+> **Security Notice**  
+> These scripts provide **arbitrary command execution** and powerful file operations.  
+> **Never** deploy them publicly or in production. Use **only** in a secure, authorized test environment.
 
 ---
+![image](https://github.com/user-attachments/assets/d8ba8665-5eac-4764-8ee9-c6cfc4a789d4)
 
-## Features
+## Key Features
 
 1. **OS Detection**  
-   - Automatically detects Windows vs. Linux.  
-   - Executes commands using `cmd.exe` on Windows and `/bin/bash` on Linux.
+   - Windows → `cmd.exe /C`  
+   - Linux → `/bin/bash -c`  
 
 2. **Command Execution**  
-   - Windows: `cmd.exe /C <command>`  
-   - Linux: `/bin/bash -c "exec 2>&1; <command>"`
+   - Run system commands (e.g., `ipconfig`, `ifconfig`, `whoami`).
 
 3. **File Upload**  
-   - Upload a file from your local machine to the server.
+   - Transfer files from your local machine to the server.
 
 4. **Fetch Remote File**  
-   - Download a file from a remote URL (HTTP/HTTPS) directly onto the server.
+   - Download external files (HTTP/HTTPS) onto the server.
 
 5. **Download Local File**  
-   - Download a file from the server to your local browser (HTTP download).
+   - Retrieve files from the server to your local device.
 
 6. **Optional Password Protection**  
-   - Set a password constant (C#) or define (PHP) to require authentication.  
-   - Leave it blank to disable authentication.
+   - Define a password variable or constant in the script to require authentication.  
+   - Leave it empty to disable password checks entirely.
 
 ---
 
-## ASP.NET (C#) WebShell
+## Usage
 
-1. **File**: `CrossPlatformWebShell.aspx` (example filename)  
-2. **Setup**:  
-   - Place the file in an ASP.NET‐enabled directory on your server (Windows or Linux with Mono).  
-   - (Optional) Set `private const string SHELL_PASS = "MySecret";` to enable password protection.  
-   - Access it via a browser. If a password is set, enter it when prompted.
-3. **Usage**:  
-   - **CWD**: Provide a working directory (default is the current script location).  
-   - **Command**: Enter a command (e.g., `ipconfig`, `ifconfig`, etc.).  
-   - **Upload**: Select a file to upload.  
-   - **Fetch**: Provide a remote URL to fetch onto the server.  
-   - **Download**: Specify a local server file path to download to your browser.
+### 1. `crossweb.aspx` (C# ASP.NET)
 
----
+1. **Deployment**  
+   - Copy **`crossweb.aspx`** into a folder served by an ASP.NET‐enabled environment (Windows IIS, or Mono on Linux).
+   - If you want authentication, set the password in the code:
+     ```csharp
+     private const string SHELL_PASS = "YourPassword";
+     ```
+   - Access the page at:  
+     ```
+     http://yourserver/crossweb.aspx
+     ```
+   - If a password was set, you’ll be prompted to enter it once.
 
-## PHP WebShell
-
-1. **File**: `CrossShell.php`  
-2. **Setup**:  
-   - Place it on a PHP‐enabled server (Windows or Linux).  
-   - (Optional) Edit `define('SHELL_PASS', 'MySecret');` to require a password. Leave blank for no password.  
-   - Navigate to `CrossShell.php` in your browser. If password‐protected, you’ll be prompted first.
-3. **Usage**:  
-   - **CWD**: Provide a working directory (default is the script directory).  
-   - **Command**: Enter a shell command (e.g., `whoami`, `dir`, `ls`).  
-   - **Upload**: Choose a file from your local machine to upload.  
-   - **Fetch**: Provide a remote HTTP/HTTPS URL to download to the server.  
-   - **Download**: Enter a server file path to download locally.
+2. **Interacting with the WebShell**  
+   - **Working Directory (CWD)**: Specify where commands and file operations occur (defaults to the script folder if unspecified).  
+   - **Command Execution**: Type a command (e.g. `dir`, `ls`, `netstat`) and click “Execute” OR hit enter.   
+   - **File Upload**: Select a file from your local machine to upload.  
+   - **Fetch Remote File**: Provide a remote HTTP/HTTPS URL (e.g. `http://example.com/tool.exe`) to store on the server.  
+   - **Download Local File**: Enter a server‐side path (e.g. `C:\temp\secret.txt`) to download.
 
 ---
 
-## Disclaimers & Best Practices
+### 2. `crossweb.php` (PHP)
 
-1. **Authorization**  
-   - Only use these webshells in environments where you have **explicit permission** to perform security testing.
+1. **Deployment**  
+   - Place **`crossweb.php`** in a directory served by a PHP‐enabled environment (Apache, Nginx, etc.).  
+   - If desired, enable password protection by editing:
+     ```php
+     define('SHELL_PASS', 'YourPassword');
+     ```
+   - Navigate to:
+     ```
+     http://yourserver/crossweb.php
+     ```
+   - A password prompt will appear if `SHELL_PASS` is not empty.
 
-2. **No Production Use**  
-   - These scripts run arbitrary commands and manage files. They are extremely risky if exposed publicly.
-
-3. **Security Logging & Monitoring**  
-   - If you’re using them in a test environment, ensure you keep logs and monitor traffic to avoid unintended consequences.
-
-4. **Legal**  
-   - The authors and contributors assume **no responsibility** for misuse or damages. Use at your own risk, in compliance with all applicable laws.
-
+2. **Interacting with the WebShell**  
+   - **Working Directory**: Defaults to the script’s own directory if none is provided.  
+   - **Execute Commands**: Enter a command (e.g. `whoami`, `uname -a`) and submit.  
+   - **File Upload**: Use the file picker to upload a file directly to the server.  
+   - **Fetch Remote**: Download a file from a remote URL onto the server (useful for retrieving tools or scripts).  
+   - **Local Download**: Enter a path on the server to receive it in your browser.
 ---
 
-### Example of ASPX Webshell
-![image](https://github.com/user-attachments/assets/b63fd30d-f763-4bbb-9aad-7ea723205a10)
+## Disclaimer
 
----
+- **High‐Risk Scripts**: They enable full system command execution and file manipulation.  
+- **Authorized Use Only**: Confirm you have explicit permission before deploying them.  
+- **No Liability**: The authors assume no responsibility for misuse or any resulting damage.  
+- **Recommended**: Restrict network access, utilize strong passwords, and deploy solely in test labs or controlled environments.
 
-**Enjoy responsibly and hack safely!**
+Use responsibly and stay within legal and ethical boundaries.
